@@ -6,6 +6,23 @@
 #include <string>
 #include <sstream>
 
+
+#define GLCall(x) ClearErrors(); x; CheckErrors(#x, __FILE__, __LINE__);
+
+static void ClearErrors()
+{
+		while (glGetError() != GL_NO_ERROR);
+}
+
+static void CheckErrors(const char* func, const char* file, int line)
+{
+		while (GLenum error = glGetError())
+		{
+				std::cout << "[OpenGL Error]: " << error << ": " <<
+						func << " " << file << ":" << line << std::endl;
+		}
+}
+
 struct ShaderSources
 {
 		std::string VertexSource;
@@ -138,7 +155,7 @@ int main(void)
 		unsigned int ibo;
 		glGenBuffers(1, &ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		// put vertex in buffer
+		// put index in buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), &indices, GL_STATIC_DRAW);
 
 		// SHADERS CREATION AND LINKING
@@ -156,8 +173,7 @@ int main(void)
 
 
 				//glDrawArrays(GL_TRIANGLES, 0, 3);
-				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
+				GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr););
 
 
 				/* Swap front and back buffers */
