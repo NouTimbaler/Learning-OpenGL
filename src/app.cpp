@@ -114,10 +114,12 @@ int main(void)
 				-0.5f, -0.5f,
 				0.5f, -0.5f,
 				0.5f, 0.5f,
+				-0.5f, 0.5f
+		};
 
-				0.5f, 0.5f,
-				-0.5f, 0.5f,
-				-0.5f, -0.5f
+		unsigned int indices[] = {
+				0, 1, 2,
+				2, 3, 0
 		};
 
 		// buffer generation
@@ -125,11 +127,19 @@ int main(void)
 		glGenBuffers(1, &buffer);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 		// put vertex in buffer
-		glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), &positions, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), &positions, GL_STATIC_DRAW);
+
 		// bind attributes to de vertex to use in the shaders
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
+
+		// index buffer generation
+		unsigned int ibo;
+		glGenBuffers(1, &ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		// put vertex in buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), &indices, GL_STATIC_DRAW);
 
 		// SHADERS CREATION AND LINKING
 		ShaderSources sources = ParseShader("res/shaders/basic.shader");
@@ -145,7 +155,8 @@ int main(void)
 
 
 
-				glDrawArrays(GL_TRIANGLES, 0, 6);
+				//glDrawArrays(GL_TRIANGLES, 0, 3);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 
 
