@@ -7,7 +7,7 @@
 #include <sstream>
 
 
-#define GLCall(x) ClearErrors(); x; CheckErrors(#x, __FILE__, __LINE__);
+#define GLCALL(x) ClearErrors(); x; CheckErrors(#x, __FILE__, __LINE__);
 
 static void ClearErrors()
 {
@@ -158,10 +158,14 @@ int main(void)
 		// put index in buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), &indices, GL_STATIC_DRAW);
 
-		// SHADERS CREATION AND LINKING
+		// Shaders creation and linking
 		ShaderSources sources = ParseShader("res/shaders/basic.shader");
 		unsigned int shaders = CreateShader(sources.VertexSource, sources.FragmentSource);
 		glUseProgram(shaders);
+
+		// Send uniforms
+		GLCALL(int location = glGetUniformLocation(shaders, "u_Color");)
+		GLCALL(glUniform4f(location, 0.5f, 0.1f, 0.8f, 1.0f);)
 
 
 		/* Loop until the user closes the window */
@@ -173,7 +177,7 @@ int main(void)
 
 
 				//glDrawArrays(GL_TRIANGLES, 0, 3);
-				GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr););
+				GLCALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr););
 
 
 				/* Swap front and back buffers */
