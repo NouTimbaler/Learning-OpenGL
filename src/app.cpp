@@ -106,6 +106,12 @@ int main(void)
 		if (!glfwInit())
 				return -1;
 
+
+		// Core version 3.3
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 		/* Create a windowed mode window and its OpenGL context */
 		window = glfwCreateWindow(600, 600, "My OpenGL Tests App", NULL, NULL);
 		if (!window)
@@ -143,6 +149,11 @@ int main(void)
 				2, 3, 0
 		};
 
+
+		unsigned int vao;
+		GLCALL(glGenVertexArrays(1, &vao));
+		GLCALL(glBindVertexArray(vao));
+
 		// buffer generation
 		unsigned int buffer;
 		glGenBuffers(1, &buffer);
@@ -169,6 +180,7 @@ int main(void)
 
 		// Send uniforms
 		GLCALL(int location = glGetUniformLocation(shaders, "u_Color"));
+		GLCALL(glUniform4f(location, 0.8f, 0.1f, 0.8f, 1.0f));
 
 
 
