@@ -6,22 +6,10 @@
 #include <string>
 #include <sstream>
 
+#include "Renderer.h"
 
-#define GLCALL(x) ClearErrors(); x; CheckErrors(#x, __FILE__, __LINE__);
-
-static void ClearErrors()
-{
-		while (glGetError() != GL_NO_ERROR);
-}
-
-static void CheckErrors(const char* func, const char* file, int line)
-{
-		while (GLenum error = glGetError())
-		{
-				std::cout << "[OpenGL Error]: " << error << ": " <<
-						func << " " << file << ":" << line << std::endl;
-		}
-}
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 struct ShaderSources
 {
@@ -136,6 +124,7 @@ int main(void)
 		std::cout << glGetString(GL_VERSION) << std::endl;
 
 
+		{
 		// vertex definition
 		float positions[] = {
 				-0.5f, -0.5f,
@@ -154,24 +143,15 @@ int main(void)
 		GLCALL(glGenVertexArrays(1, &vao));
 		GLCALL(glBindVertexArray(vao));
 
-		// buffer generation
-		unsigned int buffer;
-		glGenBuffers(1, &buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, buffer);
-		// put vertex in buffer
-		glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), &positions, GL_STATIC_DRAW);
+		VertexBuffer vb(positions, 4*2*sizeof(float));
 
 		// bind attributes to de vertex to use in the shaders
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
+		IndexBuffer ib(indices, 6);
 
-		// index buffer generation
-		unsigned int ibo;
-		glGenBuffers(1, &ibo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		// put index in buffer
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), &indices, GL_STATIC_DRAW);
+
 
 		// Shaders creation and linking
 		ShaderSources sources = ParseShader("res/shaders/basic.shader");
@@ -182,10 +162,16 @@ int main(void)
 		GLCALL(int location = glGetUniformLocation(shaders, "u_Color"));
 		GLCALL(glUniform4f(location, 0.8f, 0.1f, 0.8f, 1.0f));
 
-
+/*
+		// unbind everything
+		GLCALL(glBindVertexArray(0));
+		GLCALL(glUseProgram(0));
+		GLCALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+*/
 
 		float r = 0.0f;
-		float increment = 0.5f;
+		float increment = 0.05f;
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -194,13 +180,16 @@ int main(void)
 				glClear(GL_COLOR_BUFFER_BIT);
 
 
-
+				GLCALL(glUseProgram(shaders));
 				GLCALL(glUniform4f(location, r, 0.1f, 0.8f, 1.0f));
+
+				GLCALL(glBindVertexArray(vao));
+				ib.Bind();
+
 				//glDrawArrays(GL_TRIANGLES, 0, 3);
 				GLCALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
 				r += increment;
-
 				if (r > 1.0f or r < 0.0f) increment *= -1;
 
 
@@ -212,7 +201,7 @@ int main(void)
 		}
 
 		glDeleteProgram(shaders);
-
+		}
 		glfwTerminate();
 		return 0;
 }
