@@ -9,7 +9,7 @@ IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
 		GLCALL(glGenBuffers(1, &m_RendererID));
 		GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 		// put index in buffer                      make sure unsigned int == GLuint
-		GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), &data, GL_STATIC_DRAW));
+		GLCALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
 }
 
 IndexBuffer::~IndexBuffer()

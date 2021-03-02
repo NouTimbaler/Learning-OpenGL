@@ -11,6 +11,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+//#define GLCALL(x) x
 struct ShaderSources
 {
 		std::string VertexSource;
@@ -146,8 +147,8 @@ int main(void)
 		VertexBuffer vb(positions, 4*2*sizeof(float));
 
 		// bind attributes to de vertex to use in the shaders
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+		GLCALL(glEnableVertexAttribArray(0));
+		GLCALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
 		IndexBuffer ib(indices, 6);
 
@@ -156,19 +157,19 @@ int main(void)
 		// Shaders creation and linking
 		ShaderSources sources = ParseShader("res/shaders/basic.shader");
 		unsigned int shaders = CreateShader(sources.VertexSource, sources.FragmentSource);
-		glUseProgram(shaders);
+		GLCALL(glUseProgram(shaders));
 
 		// Send uniforms
 		GLCALL(int location = glGetUniformLocation(shaders, "u_Color"));
 		GLCALL(glUniform4f(location, 0.8f, 0.1f, 0.8f, 1.0f));
 
-/*
+
 		// unbind everything
 		GLCALL(glBindVertexArray(0));
 		GLCALL(glUseProgram(0));
 		GLCALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 		GLCALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-*/
+
 
 		float r = 0.0f;
 		float increment = 0.05f;
