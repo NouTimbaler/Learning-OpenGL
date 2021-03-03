@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-Wall
+CXXFLAGS=-Wall -std=c++17
 LIBS=-lGL -lglfw -lGLEW
 CPPFLAGS= $(INC_FLAGS) $(LOCURA_FLAGS)
 

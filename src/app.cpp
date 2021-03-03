@@ -10,6 +10,7 @@
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
 //#define GLCALL(x) x
 struct ShaderSources
@@ -144,14 +145,13 @@ int main(void)
 		GLCALL(glGenVertexArrays(1, &vao));
 		GLCALL(glBindVertexArray(vao));
 
+		VertexArray va;
 		VertexBuffer vb(positions, 4*2*sizeof(float));
-
-		// bind attributes to de vertex to use in the shaders
-		GLCALL(glEnableVertexAttribArray(0));
-		GLCALL(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+		VertexBufferLayout layout;
+		layout.Push<float>(2);
+		va.AddBuffer(vb, layout);
 
 		IndexBuffer ib(indices, 6);
-
 
 
 		// Shaders creation and linking
@@ -184,7 +184,7 @@ int main(void)
 				GLCALL(glUseProgram(shaders));
 				GLCALL(glUniform4f(location, r, 0.1f, 0.8f, 1.0f));
 
-				GLCALL(glBindVertexArray(vao));
+				va.Bind();
 				ib.Bind();
 
 				//glDrawArrays(GL_TRIANGLES, 0, 3);
