@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "Renderer.h"
+#include "Errors.h"
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -88,6 +89,7 @@ int main(void)
 		ib.UnBind();
 		shader.UnBind();
 
+		Renderer renderer;
 
 		float r = 0.0f;
 		float increment = 0.05f;
@@ -96,17 +98,12 @@ int main(void)
 		while (!glfwWindowShouldClose(window))
 		{
 				/* Render here */
-				glClear(GL_COLOR_BUFFER_BIT);
-
+				renderer.Clear();
 
 				shader.Bind();
 				shader.SetUniform4f("u_Color", r, 0.1f, 0.8f, 1.0f);
 
-				va.Bind();
-				ib.Bind();
-
-				//glDrawArrays(GL_TRIANGLES, 0, 3);
-				GLCALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+				renderer.Draw(va, ib, shader);
 
 				r += increment;
 				if (r > 1.0f or r < 0.0f) increment *= -1;
