@@ -12,8 +12,13 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-
+#include "Texture.h"
 #include "Shader.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
 //#define GLCALL(x) x
 
 int main(void)
@@ -31,7 +36,7 @@ int main(void)
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		/* Create a windowed mode window and its OpenGL context */
-		window = glfwCreateWindow(600, 600, "My OpenGL Tests App", NULL, NULL);
+		window = glfwCreateWindow(800, 600, "My OpenGL Tests App", NULL, NULL);
 		if (!window)
 		{
 				glfwTerminate();
@@ -56,10 +61,10 @@ int main(void)
 
 		// vertex definition
 		float positions[] = {
-				-0.5f, -0.5f,
-				0.5f, -0.5f,
-				0.5f, 0.5f,
-				-0.5f, 0.5f
+				-0.5f, -0.5f, 0.0f, 0.0f,
+				0.5f, -0.5f, 1.0f, 0.0f,
+				0.5f, 0.5f, 1.0f, 1.0f,
+				-0.5f, 0.5f, 0.0f, 1.0f
 		};
 
 		unsigned int indices[] = {
@@ -67,12 +72,16 @@ int main(void)
 				2, 3, 0
 		};
 
+		GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		GLCALL(glEnable(GL_BLEND));
 
 		VertexArray va;
-		VertexBuffer vb(positions, 4*2*sizeof(float));
 
+		VertexBuffer vb(positions, 4*4*sizeof(float));
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
+		layout.Push<float>(2);
+
 		va.AddBuffer(vb, layout);
 
 		IndexBuffer ib(indices, 6);
@@ -82,6 +91,10 @@ int main(void)
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.8f, 0.1f, 0.8f, 1.0f);
 
+
+		Texture texture("res/textures/halloween.png");
+		texture.Bind(0);
+		shader.SetUniform1i("u_Texture", 0);
 
 		// unbind everything
 		va.UnBind();
