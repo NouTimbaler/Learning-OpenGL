@@ -36,7 +36,7 @@ int main(void)
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		/* Create a windowed mode window and its OpenGL context */
-		window = glfwCreateWindow(800, 600, "My OpenGL Tests App", NULL, NULL);
+		window = glfwCreateWindow(960, 540, "My OpenGL Tests App", NULL, NULL);
 		if (!window)
 		{
 				glfwTerminate();
@@ -61,10 +61,10 @@ int main(void)
 
 		// vertex definition
 		float positions[] = {
-				-0.5f, -0.5f, 0.0f, 0.0f,
-				0.5f, -0.5f, 1.0f, 0.0f,
-				0.5f, 0.5f, 1.0f, 1.0f,
-				-0.5f, 0.5f, 0.0f, 1.0f
+				100.0f, 100.0f, 0.0f, 0.0f,
+				200.0f, 100.0f, 1.0f, 0.0f,
+				200.0f, 200.0f, 1.0f, 1.0f,
+				100.0f, 200.0f, 0.0f, 1.0f
 		};
 
 		unsigned int indices[] = {
@@ -86,21 +86,35 @@ int main(void)
 
 		IndexBuffer ib(indices, 6);
 
+		va.UnBind();
+		vb.UnBind();
+		ib.UnBind();
+
+		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+		glm::mat4 mvp = proj * view * model;
 
 		Shader shader("res/shaders/basic.shader");
 		shader.Bind();
-		shader.SetUniform4f("u_Color", 0.8f, 0.1f, 0.8f, 1.0f);
-
+		shader.SetUniformMat4f("u_MVP", mvp);
 
 		Texture texture("res/textures/halloween.png");
 		texture.Bind(0);
 		shader.SetUniform1i("u_Texture", 0);
 
-		// unbind everything
-		va.UnBind();
-		vb.UnBind();
-		ib.UnBind();
+		texture.UnBind();
 		shader.UnBind();
+
+
+		glm::mat4 model2 = glm::translate(glm::mat4(1.0f), glm::vec3(600, 200, 0));
+		glm::mat4 mvp2 = proj * view * model2;
+		Shader shader2("res/shaders/basic2.shader");
+		shader2.Bind();
+		shader2.SetUniform4f("u_Color", 0.8f, 0.1f, 0.8f, 1.0f);
+		shader2.SetUniformMat4f("u_MVP", mvp2);
+
 
 		Renderer renderer;
 
@@ -114,13 +128,20 @@ int main(void)
 				renderer.Clear();
 
 				shader.Bind();
-				shader.SetUniform4f("u_Color", r, 0.1f, 0.8f, 1.0f);
-
+				texture.Bind();
 				renderer.Draw(va, ib, shader);
+				shader.UnBind();
+				texture.UnBind();
+
+
+				shader2.Bind();
+				shader2.SetUniform4f("u_Color", r, 0.1f, 0.8f, 1.0f);
+				renderer.Draw(va, ib, shader2);
+				shader2.UnBind();
+
 
 				r += increment;
 				if (r > 1.0f or r < 0.0f) increment *= -1;
-
 
 				/* Swap front and back buffers */
 				glfwSwapBuffers(window);
