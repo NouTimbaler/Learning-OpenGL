@@ -1,3 +1,7 @@
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -45,8 +49,6 @@ int main(void)
 
 		/* Make the window's context current */
 		glfwMakeContextCurrent(window);
-
-
 		// VSYNC
 		glfwSwapInterval(1);
 
@@ -55,6 +57,15 @@ int main(void)
 				std::cout << "error" << std::endl;
 				return -1;
 		}
+
+
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init("#version 130");
+		ImGui::StyleColorsDark();
 
 		std::cout << glGetString(GL_VERSION) << std::endl;
 
@@ -121,11 +132,18 @@ int main(void)
 		float r = 0.0f;
 		float increment = 0.05f;
 
+		float f;
+		char buf[200];
+
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
 				/* Render here */
 				renderer.Clear();
+
+
+
+
 
 				shader.Bind();
 				texture.Bind();
@@ -143,12 +161,31 @@ int main(void)
 				r += increment;
 				if (r > 1.0f or r < 0.0f) increment *= -1;
 
+				ImGui_ImplOpenGL3_NewFrame();
+				ImGui_ImplGlfw_NewFrame();
+				ImGui::NewFrame();
+
+				ImGui::Begin("hello");
+				ImGui::Text("Hello world %d", 123);
+				if(ImGui::Button("Save"))
+						std::cout << "saved! xdxd" << std::endl;
+				ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
+				ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+				ImGui::End();
+
+				ImGui::Render();
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 				/* Swap front and back buffers */
 				glfwSwapBuffers(window);
 
 				/* Poll for and process events */
 				glfwPollEvents();
 		}
+
+		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui::DestroyContext();
 
 		glfwTerminate();
 		return 0;

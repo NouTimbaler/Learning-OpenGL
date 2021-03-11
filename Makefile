@@ -7,8 +7,10 @@ CPPFLAGS= $(INC_FLAGS) $(LOCURA_FLAGS)
 SRC_DIR := ./src
 BUILD_DIR := ./build
 
+vendor_dir := ./imgui
+
 # Find all cpp files
-SRCS := $(notdir $(shell find $(SRC_DIR) -name *.cpp))
+SRCS := $(notdir $(shell find $(SRC_DIR) $(vendor_dir) -name *.cpp))
 
 # Create obj names
 OBJ := $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
@@ -18,7 +20,7 @@ DEPS := $(OBJS:.o=.d)
 LOCURA_FLAGS := -MMD -MP
 
 # Find header dirs
-INC_DIRS := $(shell find $(SRC_DIR) -type d)
+INC_DIRS := $(shell find $(SRC_DIR) $(vendor_dir) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 
@@ -30,6 +32,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 
+$(BUILD_DIR)/%.o: $(vendor_dir)/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
