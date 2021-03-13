@@ -104,6 +104,7 @@ int main(void)
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+		model = glm::scale(model, glm::vec3(2, 2, 0));
 
 		glm::mat4 mvp = proj * view * model;
 
@@ -143,8 +144,8 @@ int main(void)
 				shader.Bind();
 				texture.Bind();
 				renderer.Draw(va, ib, shader);
-				shader.UnBind();
-				texture.UnBind();
+				//shader.UnBind();
+				//texture.UnBind();
 
 		glm::mat4 model2 = glm::translate(glm::mat4(1.0f), translation);
 		glm::mat4 mvp2 = proj * view * model2;
@@ -152,7 +153,6 @@ int main(void)
 				shader2.SetUniform4f("u_Color", f, 0.1f, 0.8f, 1.0f);
 		shader2.SetUniformMat4f("u_MVP", mvp2);
 				renderer.Draw(va, ib, shader2);
-				shader2.UnBind();
 
 				r += increment;
 				if (r > 1.0f or r < 0.0f) increment *= -1;

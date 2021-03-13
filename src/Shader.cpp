@@ -8,7 +8,7 @@
 #include "Errors.h"
 
 Shader::Shader(const std::string& filename)
-		: m_FilePath(filename), m_RendererID(0)
+		: m_FilePath(filename)
 {
 
 		ShaderSources sources = ParseShader(filename);
@@ -51,8 +51,9 @@ void Shader::SetUniform1i(const std::string& name, int value)
 
 int Shader::GetUniformLocation(const std::string& name)
 {
-		if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
-				return m_UniformLocationCache[name];
+		auto loc = m_UniformLocationCache.find(name);
+		if(loc != m_UniformLocationCache.end())
+				return loc->second;
 
 		GLCALL(int location = glGetUniformLocation(m_RendererID, name.c_str()));
 		if(location == -1)
