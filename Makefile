@@ -9,8 +9,10 @@ BUILD_DIR := ./build
 
 vendor_dir := ./imgui
 
+tests_dir := ./tests
+
 # Find all cpp files
-SRCS := $(notdir $(shell find $(SRC_DIR) $(vendor_dir) -name *.cpp))
+SRCS := $(notdir $(shell find $(SRC_DIR) $(vendor_dir) $(tests_dir) -name *.cpp))
 
 # Create obj names
 OBJ := $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
@@ -20,7 +22,7 @@ DEPS := $(OBJS:.o=.d)
 LOCURA_FLAGS := -MMD -MP
 
 # Find header dirs
-INC_DIRS := $(shell find $(SRC_DIR) $(vendor_dir) -type d)
+INC_DIRS := $(shell find $(SRC_DIR) $(vendor_dir) $(tests_dir) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 
@@ -33,6 +35,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 
 $(BUILD_DIR)/%.o: $(vendor_dir)/%.cpp
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(tests_dir)/%.cpp
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
