@@ -13,17 +13,12 @@
 #include "Renderer.h"
 #include "Errors.h"
 
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Texture.h"
-#include "Shader.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "TestClearColor.h"
 #include "Test.h"
+#include "TestClearColor.h"
+#include "TestTexture2D.h"
 
 //#define GLCALL(x) x
 
@@ -82,6 +77,7 @@ int main(void)
 		currentTest = testMenu;
 
 		testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+		testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
 
 
 		while (!glfwWindowShouldClose(window))
