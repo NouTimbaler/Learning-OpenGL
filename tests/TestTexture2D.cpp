@@ -43,7 +43,6 @@ namespace test
 				m_Shader = std::make_unique<Shader>("res/shaders/basicTexture.shader");
 				m_Shader->Bind();
 				m_Shader->SetUniformMat4f("u_MVP", mvp);
-
 				m_Texture = std::make_unique<Texture>("res/textures/halloween.png");
 				m_Shader->SetUniform1i("u_Texture", 0);
 

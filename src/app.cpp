@@ -22,6 +22,11 @@
 
 //#define GLCALL(x) x
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+		glViewport(0,0,width,height);
+}
+
 int main(void)
 {
 		GLFWwindow* window;
@@ -29,13 +34,10 @@ int main(void)
 		/* Initialize glfw */
 		if (!glfwInit())
 				return -1;
-
-
 		// Core version 3.3
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 		/* Create a windowed mode window and its OpenGL context */
 		window = glfwCreateWindow(960, 540, "My OpenGL Tests App", NULL, NULL);
 		if (!window)
@@ -43,20 +45,18 @@ int main(void)
 				glfwTerminate();
 				return -1;
 		}
-
 		/* Make the window's context current */
 		glfwMakeContextCurrent(window);
 		// VSYNC
 		glfwSwapInterval(1);
-
 		// Initialitze glew
 		if (glewInit() != GLEW_OK){
 				std::cout << "error" << std::endl;
 				return -1;
 		}
-
 		std::cout << glGetString(GL_VERSION) << std::endl;
 
+		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 		GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCALL(glEnable(GL_BLEND));
