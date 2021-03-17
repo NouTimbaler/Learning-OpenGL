@@ -19,12 +19,22 @@
 #include "Test.h"
 #include "TestClearColor.h"
 #include "TestTexture2D.h"
-
 //#define GLCALL(x) x
+
+const float ra = 16.0f/9.0f;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-		glViewport(0,0,width,height);
+		if((width/(float)height) >= ra)
+		{
+				float w = (width/2) - ((height*ra)/2);
+				glViewport(w,0,height*ra,height);
+		}
+		else
+		{
+				float h = (height/2) - ((width/ra)/2);
+				glViewport(0,h,width,width/ra);
+		}
 }
 
 int main(void)
@@ -61,6 +71,7 @@ int main(void)
 		GLCALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCALL(glEnable(GL_BLEND));
 
+		glViewport(0,0,960, 540);
 		Renderer renderer;
 
 		IMGUI_CHECKVERSION();
